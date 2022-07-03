@@ -1,0 +1,128 @@
+---
+layout: page
+title: Articles
+permalink2: /blog
+nav: 3
+nav-fas:  fas fa-th-large
+---
+
+<div class="posts">
+{%- assign filteredposts = paginator.posts | where_exp:"post", "post.public == true" -%}
+{%- for post in filteredposts -%}
+<div class="post">
+
+  <h2 id="{{- post.title | char_filter | replace: ' ', '-' -}}"><a href="{{- site.baseurl -}}{{- post.url -}}">{{- post.title -}}</a></h2>
+
+  <div class="post-header-ref-div">
+    <table class="post-header">
+      <tr>
+        <td>Date:</td>
+        <td><a
+            href="{{- site.baseurl -}}/archive#{{- post.date | date: '%Y' -}}"><code><nobr>{{- post.date | date_to_long_string: "ordinal" -}}</nobr></code></a>
+        </td>
+      </tr>
+
+      <tr>
+        <td>Time to read:</td>
+        <td><code><nobr><i>{{- post.content | reading_time -}}</i></nobr></code>
+        </td>
+      </tr>
+
+      {%- if post.project != nil -%}
+      {%- for p in site.pages -%}
+      {%- if p.projectpage == post.project -%}
+      <tr>
+        <td>Project:</td>
+        <td><a href="{{- site.baseurl -}}{{- p.permalink -}}">
+            <code><nobr>{{- p.title -}}</nobr></code>
+          </a>
+        </td>
+      </tr>
+      {%- endif -%}
+      {%- endfor -%}
+      {%- endif -%}
+
+      {%- assign tsize = post.tags | size -%}
+      {%- if tsize != 0 -%}
+      <tr>
+        <td>Tags:</td>
+        <td>
+          {%- for tag in post.tags -%}
+          {%- capture tag_name -%}{{- tag -}}{%- endcapture -%}
+
+          <a href="{{- site.baseurl -}}/tags#{{- tag_name -}}"><code><nobr>#{{- tag_name -}}</nobr></code></a>{%- unless
+            forloop.last -%},&nbsp;{%- endunless -%}
+
+          {%- endfor -%}
+        </td>
+      </tr>
+      {%- endif -%}
+
+      {%- if post.project != null -%}
+      <tr>
+        <td>Project:</td>
+        <td><a href="{{- site.baseurl -}}/projects/{{- post.project -}}"><code><nobr>{{- post.project -}}</nobr></code></a>
+        </td>
+      </tr>
+      {%- endif -%}
+
+      <tr>
+        <td>Author:</td>
+        <td><a href="{{- site.baseurl -}}/about"><code><nobr>{{- site.author.name -}}</nobr></code></a>
+        </td>
+      </tr>
+
+      {%- assign date1 = post.date | date: "%B %e, %Y" -%}
+      {%- assign date2 = post.last_modified_at | date: "%B %e, %Y" -%}
+      {%- if date1 != date2 -%}
+      <tr>
+        <td>Last modified:</td>
+        <td><a
+            href="{{- site.baseurl -}}/archive#{{- post.last_modified_at | date: '%Y' -}}"><code><nobr>{{- post.last_modified_at | date_to_long_string: "ordinal" -}}</nobr></code></a>
+        </td>
+      </tr>
+      {%- endif -%}
+    </table>
+  </div>
+
+  <div class="entry">
+    {{- post.excerpt -}}
+  </div>
+
+  <div class="read-more buttons">
+    <a href="{{- site.baseurl -}}{{- post.url -}}#top" class="btn btn-outline-info btn-block"><i class="fas fa-search"></i> Read More</a>
+  </div>
+
+</div>
+{%- endfor -%}
+</div>
+
+
+
+{%- if paginator.total_pages > 1 -%}
+<hr/>
+<div class="pagination">
+  {%- if paginator.previous_page -%}
+    <a href="{{- paginator.previous_page_path | relative_url -}}">&laquo; Prev</a> | 
+  {%- else -%}
+    <span>&laquo; Prev | </span>
+  {%- endif -%}
+
+{%- for page in (1..paginator.total_pages) -%}
+{%- if page == paginator.page -%}
+<em>{{- page -}}</em>
+{%- elsif page == 1 -%}
+<a href="{{- '/' | relative_url -}}">{{- page -}}</a>
+{%- else -%}
+<a href="{{- site.paginate_path | relative_url | replace: ':num', page -}}">{{- page -}}</a>
+{%- endif -%}
+{%- endfor -%}
+
+{%- if paginator.next_page -%}
+| <a href="{{- paginator.next_page_path | relative_url -}}">Next &raquo;</a>
+{%- else -%}
+<span> | Next &raquo;</span>
+{%- endif -%}
+
+</div>
+{%- endif -%}
